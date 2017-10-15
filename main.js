@@ -60,20 +60,18 @@ $.ajax({
 });
 
 navigator.geolocation.getCurrentPosition((position) => {
-  new Notification(`lat: ${position.coords.latitude}, lng: ${position.coords.longitude}`)
   window.latlng = {
     lat: position.coords.latitude,
     lng: position.coords.longitude,
   }
-
   $("#latlng").text(`location: lat: ${latlng.lat}, lng: ${latlng.lng}`)
 });
 
 setTimeout(() => {
   new Notification('Notice: Broadway parking', { body: 'Parking on broadway blocked off for event X' });
-}, 10000);
+}, 20000);
 
 
 setTimeout(() => {
   new Notification('Warning: Storm approaching West Fargo', { body: 'Stay indoors and wait until further direction' });
-}, 16000);
+}, 23000);
