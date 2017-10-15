@@ -8,6 +8,10 @@ Notification.requestPermission().then(function (status) {
 
 $("#latlng").text('location: Remember to enable GPS')
 
+$("#form").submit(function(e){
+    return false;
+});
+
 $.makeTable = function (mydata) {
     var table = $('<table border=1>');
     var tblHeader = "<tr>";

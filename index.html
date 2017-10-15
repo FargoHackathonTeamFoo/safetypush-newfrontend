@@ -8,6 +8,9 @@
       margin-top: 20px;
       height: 400px;
     }
+    #form {
+      margin-top: 20px;
+    }
     </style>
     <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -25,8 +28,36 @@
     <h1>Citizen View</h1>
     <div id="latlng"></div>
     <div id="table"></div>
-    <h2>Last message's polygon</h2>
+    <h2>Latest alert's affected area</h2>
     <div class="affected" id="affected"></div>
+    <form id="form">
+      <fieldset>
+      <legend>Choose Notification Level</legend>
+      <div>
+        <input disabled="disabled" checked="checked" type="checkbox" id="main" name="settings" value="fargo">
+        <label for="fargo">Fargo (general alerts)</label>
+      </div>
+      <div>
+        <input type="checkbox" id="weather" name="settings" value="weather">
+        <label for="weather">Weather</label>
+      </div>
+      <div>
+        <input type="checkbox" id="road" name="settings" value="road">
+        <label for="road">Road</label>
+      </div>
+      <div>
+        <input type="checkbox" id="fire" name="settings" value="fire">
+        <label for="fire">Fire</label>
+      </div>
+      <div>
+        <input type="checkbox" id="police" name="settings" value="police">
+        <label for="police">Police</label>
+      </div>
+      <div>
+        <button type="submit">Submit form</button>
+      </div>
+      </fieldset>
+    </form>
   <script src="/main.js"></script>
   </body>
 </html>
