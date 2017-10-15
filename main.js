@@ -59,12 +59,6 @@ $.ajax({
   }
 });
 
-// var socket = io('http://localhost:8080/socket.io');
-// socket.on('message', (data) => {
-//   let msg = JSON.parse(msg)
-//   new Notification(msg.title, { body: msg.body });
-// });
-
 navigator.geolocation.getCurrentPosition((position) => {
   new Notification(`lat: ${position.coords.latitude}, lng: ${position.coords.longitude}`)
   window.latlng = {

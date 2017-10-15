@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+    crossorigin=""></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.12/leaflet.draw.js"></script>
+  <script>
+    $(document).ready(() => {
+      let affectedMap = L.map('affected', {
+        zoom: 10,
+        center: L.latLng(46.8772, -96.7898),
+        drawControl: true
+      });
+
+      var drawnItems = new L.FeatureGroup();
+      affectedMap.addLayer(drawnItems);
+      var drawControl = new L.Control.Draw({
+         edit: {
+             featureGroup: drawnItems
+         }
+      });
+      affectedMap.addControl(drawControl);
+
+      let affectedMapTarget = null;
+
+      affectedMap.on(L.Draw.Event.CREATED, function (e) {
+        var type = e.layerType,
+            layer = e.layer;
+        if (affectedMapTarget != null) {
+          drawnItems.removeLayer(affectedMapTarget)
+        }
+        drawnItems.addLayer(layer);
+        affectedMapTarget = layer;
+      });
+
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: 'pk.eyJ1IjoiYXJjdGFpciIsImEiOiJjajZ0azlxc28wZnp5MndvNGZkOG9waXVmIn0.QkUWyUDc1TjXFn6K0DB1rg'
+      }).addTo(affectedMap);
+
+      function getForm() {
+        return {
+          channel: $("select#channel").val(),
+          title: $("input#title").val(),
+          pushBody: $("input#push").val(),
+          body: $("textarea#body").val(),
+          displayGeometry: affectedMapTarget.toGeoJSON(),
+          affectedGeometry: affectedMapTarget.toGeoJSON().geometry,
+        }
+      }
+
+      function postMsg() {
+        console.log(getForm())
+        $.ajax({
+          url: "http://localhost:8080/api/v1/message",
+          method: "POST",
+          data: JSON.stringify(getForm()),
+          contentType: "application/json; charset=utf-8",
+          traditional: true,
+          dataType: 'json',
+          success: data => {
+            alert('success')
+          },
+          error: err => {
+            alert('There was an error')
+            alert(err)
+          }
+        })
+      }
+
+      $("button").on('click', postMsg)
+
+      $.ajax({
+        url: "http://localhost:8080/api/v1/channel",
+        method: "GET",
+        success: data => {
+          console.log(data);
+          data.forEach(channel => $('select#channel').append(
+            $(`<option value="${channel.id}">${channel.name}</option>`)
+          ))
+        }
+      })
+    })
+  </script>
+  <style>
+    html, body, form {
+      height: 100%;
+      margin: 0;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    form>div {
+      flex: 0 1 auto;
+      padding-left: 1em; padding-right: 1em;
+      padding-top: 0.25em; padding-bottom: 0.25em;
+    }
+    form>div#affectedContainer {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    form>div#affectedContainer>h3 {
+      flex: 0 1 auto;
+    }
+    form>div#affectedContainer>div {
+      flex: 1 1 auto;
+    }
+  </style>
+</head>
+<body>
+  <form>
+    <!-- Channel dropdown -->
+    <div>
+      Channel
+      <select id="channel" name="channel"></select>
+    </div>
+    <!-- Title textbox -->
+    <div>
+      Title
+      <input id="title" name="title"/>
+    </div>
+    <!-- Body textarea -->
+    <div>
+      Body
+      <textarea id="body" name="body"></textarea>
+    </div>
+    <!-- Push textbox -->
+    <div>
+      Push
+      <input id="push" name="push"/>
+    </div>
+    <!-- Upload GeoJSON -->
+    <div>
+      Upload GeoJSON
+      <input type="file" name="file" accept=".json" />
+    </div>
+    <!-- Affected map -->
+    <div id="affectedContainer">
+      <h3>Affected</h3>
+      <div id="affected" name="affected"></div>
+    </div>
+  </form>
+  <button>Submit</button>
+</body>
+</html>
