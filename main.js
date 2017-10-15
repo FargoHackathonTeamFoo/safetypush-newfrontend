@@ -46,7 +46,11 @@ $.ajax({
   url: 'http://localhost:8080/api/v1/message',
   dataType: 'json',
   success: (data) => {
-    L.geoJSON(data[0].geojson).addTo(affectedMap)
+    let latest = data[0]
+    L.geoJSON(latest.geojson).addTo(affectedMap)
+
+    $("div#body").text(latest.body)
+    $("div#title").text(latest.title)
     data.forEach((el) => {
       delete el.affected
       delete el.geojson
@@ -64,7 +68,8 @@ navigator.geolocation.getCurrentPosition((position) => {
     lat: position.coords.latitude,
     lng: position.coords.longitude,
   }
-  $("#latlng").text(`location: lat: ${latlng.lat}, lng: ${latlng.lng}`)
+
+  $("#latlng").text(`my location: lat: ${latlng.lat}, lng: ${latlng.lng}`)
 });
 
 setTimeout(() => {

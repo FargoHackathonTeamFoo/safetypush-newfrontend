@@ -26,9 +26,11 @@
   </head>
   <body>
     <h1>Citizen View</h1>
-    <div id="latlng"></div>
-    <div id="table"></div>
-    <h2>Latest alert's affected area</h2>
+    <div id="contentContain">
+      <div id="title"></div>
+      <div id="body"></div>
+    </div>
+    <h2>Affected area</h2>
     <div class="affected" id="affected"></div>
     <form id="form">
       <fieldset>
@@ -58,6 +60,8 @@
       </div>
       </fieldset>
     </form>
+
+    <div id="latlng"></div>
   <script src="/main.js"></script>
   </body>
 </html>
